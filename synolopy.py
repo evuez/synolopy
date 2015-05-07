@@ -23,7 +23,7 @@ class API(object):
 	def __init__(self, root, credentials):
 		assert len(credentials) == 2
 
-		self.root = root.rstrip('/')
+		self.root = root
 		self._sid = None
 		self._credentials = credentials
 
