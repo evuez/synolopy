@@ -22,7 +22,7 @@ class API(object):
 	VERSION = None
 	BASE = None
 	METHODS = None
-	# AUTH_HANDLER = None
+	AUTH_HANDLER = None
 
 	def __init__(self, root, credentials):
 		assert len(credentials) == 2
@@ -83,14 +83,15 @@ class API(object):
 				logging.error("An error occurred in %s: %s", name, e)
 		return method
 
-	# def login(self):
-	# 	self._sid = self.AUTH_HANDLER(
-	# 		self.root,
-	# 		self._credentials
-	# 	).build_sid()
+	def login(self):
+		self._sid = self.AUTH_HANDLER(
+			self.root,
+			self._credentials
+		).build_sid()
 
-	# def logout(self):
-	# 	self.AUTH_HANDLER(self.root, self._credentials).reset_sid()
+	def logout(self):
+		self.AUTH_HANDLER(self.root, self._credentials).reset_sid()
+		self._sid = None
 
 
 class Auth(API):
@@ -102,13 +103,11 @@ class Auth(API):
 		'logout': 'GET',
 	}
 
-	# def build_sid(self):
-	# 	return self._exec('login')()['sid']
+	def build_sid(self):
+		return self.__getattr__('login')()['sid']
 
-	# def reset_sid(self):
-	# 	self._exec('logout')
-	# 	self._sid = None
-
+	def reset_sid(self):
+		self.__getattr__('logout')()
 
 
 class DownloadStationTask(API):
@@ -118,4 +117,4 @@ class DownloadStationTask(API):
 	METHODS = {
 		'create': 'POST',
 	}
-	# AUTH_HANDLER = Auth
+	AUTH_HANDLER = Auth
