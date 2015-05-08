@@ -13,6 +13,10 @@ from urllib.parse import urlencode
 logging.basicConfig(level=logging.DEBUG)
 
 
+class RequestError(Exception):
+	pass
+
+
 class API(object):
 	NAME = None
 	VERSION = None
@@ -43,8 +47,16 @@ class API(object):
 			'api': self.NAME,
 			'version': self.VERSION,
 			'session': self.__class__.__name__,
-			'format': 'sid'
+			'format': 'sid',
+			'method': name
 		}
+
+		if self._sid:
+			_data['_sid'] = self._sid
+		else:
+			_data['account'] = self._credentials[0]
+			_data['passwd'] = self._credentials[1]
+
 		data = urlencode(dict(list(_data.items()) + list(data.items())))
 		method = self.METHODS[name]
 
@@ -61,8 +73,13 @@ class API(object):
 			raise AttributeError
 		def method(**kwargs):
 			try:
-				return json.load(self.request(name, **kwargs))
-			except  (error.URLError, TypeError) as e:
+				res = json.loads(self.request(
+					name, **kwargs
+				).read().decode('utf-8'))
+				if 'error' in res:
+					raise RequestError('errno: ', res['error']['code'])
+				return res.get('data', None)
+			except  (error.URLError, TypeError, RequestError) as e:
 				logging.error("An error occurred in %s: %s", name, e)
 		return method
 
