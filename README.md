@@ -12,7 +12,7 @@ ds = DownloadStationTask(
 	('username', 'password')
 )
 ds.login()
-ds.create(uri="magnetlink, http, whatever")
+ds.create(uri="magnetlink / http / whatever")
 ds.create(file="filepath")
 ds.logout()
 ```
