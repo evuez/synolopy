@@ -6,7 +6,7 @@ Note that this is not a fork from [Thavel's Synolopy](https://pypi.python.org/py
 
 ## Start a download
 
-```
+```python
 ds = DownloadStationTask(
 	'http://nas-ip:5000/webapi/',
 	('username', 'password')
